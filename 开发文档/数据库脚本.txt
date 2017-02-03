@@ -1,0 +1,116 @@
+USE [BeisenAutoScripts]
+GO
+/****** Object:  User [user_app_BeisenAutoScripts]    Script Date: 2017/2/3 13:31:10 ******/
+CREATE USER [user_app_BeisenAutoScripts] FOR LOGIN [user_app_BeisenAutoScripts] WITH DEFAULT_SCHEMA=[dbo]
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [user_app_BeisenAutoScripts]
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [user_app_BeisenAutoScripts]
+GO
+/****** Object:  Table [dbo].[Exec_PlanInfo]    Script Date: 2017/2/3 13:31:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Exec_PlanInfo](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[IP] [varchar](20) NOT NULL,
+	[DbID] [int] NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[Path] [varchar](255) NOT NULL,
+	[StartTime] [datetime] NOT NULL,
+	[EndTime] [datetime] NOT NULL,
+	[IsDone] [bit] NOT NULL,
+	[UserID] [int] NOT NULL,
+ CONSTRAINT [PK_Exec_PlanInfo] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Info_DatabaseInfo]    Script Date: 2017/2/3 13:31:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Info_DatabaseInfo](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[IP] [varchar](20) NOT NULL,
+	[DbName] [nvarchar](255) NOT NULL,
+	[Info] [nvarchar](500) NULL,
+	[CreateTime] [datetime] NULL,
+	[IsActive] [bit] NULL,
+	[DeleteTime] [datetime] NULL,
+	[EnvType] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Info_DbAccount]    Script Date: 2017/2/3 13:31:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Info_DbAccount](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[IP] [varchar](20) NOT NULL,
+	[Account] [nvarchar](255) NOT NULL,
+	[Password] [nvarchar](255) NOT NULL,
+	[Info] [nvarchar](500) NULL,
+	[CreateTime] [datetime] NULL,
+	[IsActive] [bit] NULL,
+	[DeleteTime] [datetime] NULL,
+	[EnvType] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Info_ToolsLog]    Script Date: 2017/2/3 13:31:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Info_ToolsLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ExecIP] [varchar](20) NULL,
+	[ActionType] [int] NULL,
+	[UseAccount] [varchar](255) NULL,
+	[UseDbName] [varchar](255) NULL,
+	[ActionTime] [datetime] NULL,
+	[EnvType] [int] NULL,
+	[ErrorInfo] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Info_Users]    Script Date: 2017/2/3 13:31:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Info_Users](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[LdapAccount] [varchar](255) NULL,
+	[LastLoginIp] [varchar](20) NULL,
+	[LastLoginTime] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+ALTER TABLE [dbo].[Info_DatabaseInfo] ADD  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Info_DbAccount] ADD  DEFAULT ((0)) FOR [IsActive]
+GO

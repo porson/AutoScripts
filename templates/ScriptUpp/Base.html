@@ -1,0 +1,163 @@
+{% extends 'header.html' %}
+{% block content %}
+    <body>
+    {% include 'BaseNav.html' %}
+    <div class="col-lg-12">
+        <div class="container">
+            <nav>
+                <ul class="nav nav-pills" role="tablist">
+                    <li role="presentation" class="active"><a href="/welcome">脚本执行</a></li>
+                    <li role="presentation"><a href="/register">数据库注册</a></li>
+                    <li role="presentation"><a href="/logs">操作日志</a></li>
+                </ul>
+            </nav>
+            <br>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="plan_info">
+                            <table id="table_plan" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>IP</th>
+                                    <th>执行数据库</th>
+                                    <th>账号</th>
+                                    <th>开始时间</th>
+                                    <th>结束时间</th>
+                                    <th>执行状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form method = 'post' enctype="multipart/form-data" action="/scripts_up/">
+                        {% csrf_token %}
+                        <label class="control-lable">选择脚本文件</label>
+                        <input id = 'sql_file_input' type="file" class="file" multiple data-show-upload="false" name="sqlFiles" accept=".sql">
+                        <hr>
+                        <label class="control-lable">请选择执行IP&账号</label><br>
+                        <select id = 'product_ip' class="form-control select2" style="width: 250px" name="exec_ip">
+                            <option>请选择IP</option>
+                        </select>
+                        <select id = 'product_account' class="form-control select2" style="width: 250px;float:left" name="exec_account">
+                            <option>请选择执行账号</option>
+                        </select>
+                        <hr>
+                        <label class="control-lable">请选择要执行的数据库</label><br>
+                        <select id = 'product_db' class="select2 js-example-basic-multiple"  multiple="multiple"  style="width: 100%" name="exec_db">
+                            <option>数据正在加载...</option>
+                        </select>
+                        <br>
+                        <hr>
+                        <button class="btn btn-primary" type="submit">脚本提交审核</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </body>
+{% endblock %}
+{% block script %}
+    <script>
+        $('document').ready(function () {
+            var table_plan = $('#table_plan').DataTable({
+                "ajax": {
+                    url:"/get_exec_plan",
+                    dataSrc: ""
+                },
+                columns:[
+                    {data:'IP'},
+                    {data:'DbID'},
+                    {data:"AccountID"},
+                    {data:"StartTime"},
+                    {data:"EndTime"},
+                    {data:"IsDone"},
+                    {
+                        data: "ID",
+                        render:function (data) {
+                            data = "" +
+                                "<button class='btn btn-primary'>修改</button>" +
+                                "<button class='btn btn-danger'>执行</button>" +
+                                "<button class='btn btn-warning'>日志</button>";
+                            return data
+                        }
+                    }
+                ],
+                processing:true,
+                scrollY: "150px",
+                scrollCollapse: "true",
+                paging: false,
+                oLanguage: {
+                    sLengthMenu: "每页显示 _MENU_ 条记录",
+                    sZeroRecords: "抱歉， 没有找到",
+                    sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    sInfoEmpty: "没有数据",
+                    sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+                    oPaginate: {
+                        sFirst: "首页",
+                        sPrevious: "前一页",
+                        sNext: "后一页",
+                        sLast: "尾页"
+                    },
+                    sZeroRecords: "没有检索到数据",
+                    sProcessing: "数据正在加载，请稍后..."
+                }
+            });
+            $('#sql_file_input').fileinput({
+                language: 'zh', //设置语言
+                dropZoneEnabled: false,
+                showUpload: false, //是否显示上传按钮
+                showCaption: true, //是否显示标题,
+                browseClass: "btn btn-primary", //按钮样式
+                initialCaption: "请选择需要执行的脚本",
+                allowedFileExtensions : ['.sql']
+            });
+            $(".select2").select2();
+
+            $.ajax({
+                url:'/get_ip_from_db/',
+                dataType:'json',
+                async:true,
+                success:function(data) {
+                    var item = '<option>请选择IP</option>';
+                    for(var i in data){
+                        item = item+'<option value='+data[i]+'>'+data[i]+'</option>'
+                    }
+                    $('#product_ip').html(item);
+                }
+            });
+        });
+        $('#product_ip').change(function () {
+            $.ajax({
+                url:'/get_db_with_ip/'+$(this).val()+'/',
+                dataType:'json',
+                async:true,
+                success:function(data) {
+                    var item = '';
+                    for(var i in data){
+                        item = item+'<option value='+data[i]+'>'+data[i]+'</option>'
+                    }
+                    $('#product_db').html(item);
+                }
+            });
+            $.ajax({
+                url:'/get_account_with_ip/'+$(this).val()+'/',
+                dataType:'json',
+                async:true,
+                success:function(data) {
+                    var item = '';
+                    for(var i in data){
+                        item = item+'<option value='+data[i]+'>'+data[i]+'</option>'
+                    }
+                    $('#product_account').html(item);
+                }
+            })
+        })
+
+    </script>
+{% endblock %}

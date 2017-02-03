@@ -1,0 +1,293 @@
+{% extends 'header.html' %}
+{% block content %}
+    <body>
+    {% include 'BaseNav.html' %}
+
+    <div class="col-lg-12">
+        <div class="container">
+            <nav>
+                <ul class="nav nav-pills" role="tablist">
+                    <li role="presentation"><a href="/welcome">脚本执行</a></li>
+                    <li role="presentation" class="active"><a href="/register">数据库注册</a></li>
+                    <li role="presentation"><a href="/logs">操作日志</a></li>
+                </ul>
+            </nav>
+            <br>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <nav>
+                        <ul class="nav nav-tabs" role="tablist" id = 'tab_register'>
+                            <li role="presentation" class="active"><a href="#user_add">添加发布账户</a></li>
+                            <li role="presentation"><a href="#db_add">添加数据库</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="user_add">
+                            <hr>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#addUser">添加发布账户</button>
+                            <br>
+                            <table id="table_user" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>IP</th>
+                                    <th>账号名称</th>
+                                    <th>备注</th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <br>
+
+
+                            <div class="modal fade" id="addUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">添加发布账户</h4>
+                                        </div>
+
+                                        <form class="form-horizontal" role="form" id="fm_add_account" method="post" action="/register_register/" onsubmit="return checkAccount()">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+
+                                                <div class="form-group">
+                                                    <label for="input_ip" class="col-sm-2 control-label">*IP</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="input_ip" placeholder="IP" name="ip">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inputPassword3" class="col-sm-2 control-label">*UserName</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="input_userNmae" placeholder="用户名" name="account">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="input_Password" class="col-sm-2 control-label">*Password</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="password" class="form-control" id="input_Password" placeholder="密码" name="password">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="input_account_info" class="col-sm-2 control-label" maxlength="300">描述信息</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" class="form-control" id="input_account_info" placeholder="账号用途备注" name="accountInfo">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                <button type="submit" class="btn btn-primary" id="btn_save_add_account">保存</button>
+                                            </div>
+                                        </form>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="db_add">
+                            <hr>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#addDB">添加数据库</button>
+                            <br>
+                            <table id="table_db" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>IP</th>
+                                    <th>数据库名</th>
+                                    <th>信息</th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <br>
+
+                            <div class="modal fade" id="addDB" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">添加数据库</h4>
+                                        </div>
+                                        <form class="form-horizontal" role="form" id="fm_ad_database" method="post" action="/register_register/" onsubmit="return checkDB()">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <div class="modal-body">
+
+                                                    <div class="form-group">
+                                                        <label for="input_db_ip" class="col-sm-2 control-label">*IP</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" class="form-control" id="input_db_ip" placeholder="IP" name="ip">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="input_db_name" class="col-sm-2 control-label">*DBName</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" class="form-control" id="input_db_name" placeholder="数据库名称" name="dbName">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="input_db_info" class="col-sm-2 control-label">描述信息</label>
+                                                        <div class="col-sm-10">
+                                                            <input type="text" class="form-control" id="input_db_info" maxlength="300" placeholder="产品线或其他备注信息" name="dbinfo">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                <button type="submit" class="btn btn-primary" id="btn_save_add_db">保存</button>
+                                            </div>
+                                        </form>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+{% endblock %}
+{% block script %}
+    <script>
+        function checkDB() {
+            var re=/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;//正则表达式
+            var ip = $('#input_db_ip').val();
+            var dbname = $('#input_db_name').val();
+            if( ip == ''){
+                alert('IP不能为空')
+                return false
+            }else if(re.test(ip)) {
+                if( RegExp.$1>=256 || RegExp.$2>=256 || RegExp.$3>=256 || RegExp.$4>=256){
+                    alert('输入了非法的IP地址')
+                    return false
+                }
+            }else{
+                alert("请输入正确的IP地址");
+                return false;
+            }
+            if(dbname == ''){
+                alert('数据库名称不能为空')
+                return false
+            }
+        }
+        function checkAccount() {
+            var re=/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;//正则表达式
+            var ip = $('#input_ip').val();
+            var userName = $('#input_userNmae').val();
+            var password = $('#input_Password').val();
+            if( ip == ''){
+                alert('IP不能为空');
+                return false
+            }else if(re.test(ip)) {
+                if( RegExp.$1>=256 || RegExp.$2>=256 || RegExp.$3>=256 || RegExp.$4>=256){
+                    alert('输入了非法的IP地址');
+                    return false
+                }
+            }else{
+                alert("请输入正确的IP地址");
+                return false;
+            }
+            if(userName == ''){
+                alert('账号不能为空');
+                return false
+            }
+            if(password == ''){
+                alert('密码不能为空');
+                return false
+            }
+        }
+
+        $(document).ready( function () {
+            $('#tab_register a:first').tab('show');
+            $('#tab_register a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show')
+                table_db.draw(false);
+            })
+            var table_account = $('#table_user').DataTable({
+                "ajax": {
+                    url:"/register_show_account/",
+                    dataSrc: ""
+                },
+                columns:[
+                    {data:"ip"},
+                    {data:"account"},
+                    {
+                        data:"info",
+                        render:function (data) {
+                            if (data == ""){
+                                return "无"
+                            }else {
+                                return data
+                            }
+                        }
+                    }
+                ],
+                                processing:true,
+                scrollY: "300px",
+                scrollCollapse: "true",
+                paging: false,
+                oLanguage: {
+                sLengthMenu: "每页显示 _MENU_ 条记录",
+                sZeroRecords: "抱歉， 没有找到",
+                sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                sInfoEmpty: "没有数据",
+                sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+                oPaginate: {
+                sFirst: "首页",
+                sPrevious: "前一页",
+                sNext: "后一页",
+                sLast: "尾页"
+                },
+                sZeroRecords: "没有检索到数据",
+                sProcessing: "数据正在加载，请稍后..."
+                }
+            });
+
+            var table_db = $('#table_db').DataTable({
+                "ajax": {
+                    url:"/register_show_database/",
+                    dataSrc: ""
+                },
+                columns:[
+                    {data:"ip"},
+                    {data:"dbname"},
+                    {
+                        data:"info",
+                        render:function (data) {
+                            if (data == ""){
+                                return "无"
+                            }else {
+                                return data
+                            }
+                        }
+                    }
+                ],
+                processing:true,
+                scrollY: "300px",
+                scrollCollapse: "true",
+                paging: false,
+                oLanguage: {
+                sLengthMenu: "每页显示 _MENU_ 条记录",
+                sZeroRecords: "抱歉， 没有找到",
+                sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                sInfoEmpty: "没有数据",
+                sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+                oPaginate: {
+                sFirst: "首页",
+                sPrevious: "前一页",
+                sNext: "后一页",
+                sLast: "尾页"
+                },
+                sZeroRecords: "没有检索到数据",
+                sProcessing: "数据正在加载，请稍后..."
+                }
+            });
+        } );
+    </script>
+{% endblock %}

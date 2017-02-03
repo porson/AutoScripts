@@ -1,0 +1,217 @@
+{% extends 'header.html' %}
+{% block content %}
+    <body>
+    {% include 'BaseNav.html' %}
+
+    <div class="col-lg-12">
+        <div class="container">
+            <nav>
+                <ul class="nav nav-pills" role="tablist">
+                    <li role="presentation"><a href="/welcome">脚本执行</a></li>
+                    <li role="presentation" ><a href="/register">数据库注册</a></li>
+                    <li role="presentation" class="active"><a href="/logs">操作日志</a></li>
+                </ul>
+            </nav>
+            <br>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <nav>
+                        <ul class="nav nav-tabs" role="tablist" id = 'tab_logs'>
+                            <li role="presentation" class="active"><a href="#db_add_log">数据库操作记录</a></li>
+                            <li role="presentation"><a href="#user_add_log">账号操作记录</a></li>
+                            <li role="presentation"><a href="#error_log">错误记录</a></li>
+                        </ul>
+                    </nav>
+                    <hr>
+
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="db_add_log">
+                            <table id="table_db" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>IP来源</th>
+                                    <th>操作类型</th>
+                                    <th>数据库名称</th>
+                                    <th>执行时间</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="user_add_log">
+                            <table id="table_account" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>IP来源</th>
+                                    <th>操作类型</th>
+                                    <th>账号名称</th>
+                                    <th>执行时间</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="error_log">
+                            <table id="table_error" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>IP来源</th>
+                                    <th>错误类型</th>
+                                    <th>账号名称</th>
+                                    <th>数据库名称</th>
+                                    <th>执行时间</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </body>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $('#tab_logs a:first').tab('show');
+            $('#tab_logs a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+                table_db.draw(false);
+                table_account.draw(false);
+                table_error.draw(false);
+            })
+            var table_db = $('#table_db').DataTable({
+                "ajax": {
+                    url:"/logs/databases",
+                    dataSrc: ""
+                },
+                columns:[
+                    {data:"action_ip"},
+                    {
+                        data:"type",
+                        render:function (data) {
+                            if (data == 1) {
+                                data = '注册数据库信息'
+                            } else if ( data == 3) {
+                                data = '注销数据库信息'
+                            }
+                            return data
+                        }
+                    },
+                    {data:"database"},
+                    {data:"action_time"},
+                ],
+                processing:true,
+                scrollY: "300px",
+                scrollCollapse: "true",
+                paging: false,
+                oLanguage: {
+                    sLengthMenu: "每页显示 _MENU_ 条记录",
+                    sZeroRecords: "抱歉， 没有找到",
+                    sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    sInfoEmpty: "没有数据",
+                    sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+                    oPaginate: {
+                        sFirst: "首页",
+                        sPrevious: "前一页",
+                        sNext: "后一页",
+                        sLast: "尾页"
+                    },
+                    sZeroRecords: "没有检索到数据",
+                    sProcessing: "数据正在加载，请稍后..."
+                }
+            });
+            var table_account = $('#table_account').DataTable({
+                "ajax": {
+                    url:"/logs/account",
+                    dataSrc: ""
+                },
+                columns:[
+                    {data:"action_ip"},
+                    {
+                        data:"type",
+                        render:function (data) {
+                            if (data == 2) {
+                                data = '注册账号信息'
+                            } else if ( data == 4) {
+                                data = '注销账号信息'
+                            }
+                            return data
+                        }
+
+                    },
+                    {data:"account"},
+                    {data:"action_time"},
+                ],
+                processing:true,
+                scrollY: "300px",
+                scrollCollapse: "true",
+                paging: false,
+                oLanguage: {
+                    sLengthMenu: "每页显示 _MENU_ 条记录",
+                    sZeroRecords: "抱歉， 没有找到",
+                    sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    sInfoEmpty: "没有数据",
+                    sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+                    oPaginate: {
+                        sFirst: "首页",
+                        sPrevious: "前一页",
+                        sNext: "后一页",
+                        sLast: "尾页"
+                    },
+                    sZeroRecords: "没有检索到数据",
+                    sProcessing: "数据正在加载，请稍后..."
+                }
+            });
+            var table_error = $('#table_error').DataTable({
+                "ajax": {
+                    url:"/logs/errors",
+                    dataSrc: ""
+                },
+                columns:[
+                    {data:"action_ip"},
+                    {
+                        data:"type",
+                        render:function (data) {
+                            if (data == 0) {
+                                data = '创建失败'
+                            } else if ( data == 10) {
+                                data = '删除失败'
+                            }
+                            return data
+                        }
+                    },
+                    {data:"account"},
+                    {data:"database"},
+                    {data:"action_time"},
+                ],
+                processing:true,
+                scrollY: "300px",
+                scrollCollapse: "true",
+                paging: false,
+                oLanguage: {
+                    sLengthMenu: "每页显示 _MENU_ 条记录",
+                    sZeroRecords: "抱歉， 没有找到",
+                    sInfo: "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                    sInfoEmpty: "没有数据",
+                    sInfoFiltered: "(从 _MAX_ 条数据中检索)",
+                    oPaginate: {
+                        sFirst: "首页",
+                        sPrevious: "前一页",
+                        sNext: "后一页",
+                        sLast: "尾页"
+                    },
+                    sZeroRecords: "没有检索到数据",
+                    sProcessing: "数据正在加载，请稍后..."
+                }
+            });
+        })
+    </script>
+
+
+{% endblock %}
